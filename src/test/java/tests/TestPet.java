@@ -40,7 +40,7 @@ public class TestPet {
 /*        assertEquals(200, response.getStatusCode(),
                 "Код ответа не совпал с ожидаемым. Ответ " + responseBody);*/
 
-        step("Проверить, что текст ответа 'models.Pet deleted'", () ->
+        step("Проверить, что текст ответа 'Pet deleted'", () ->
                 assertEquals("Pet deleted", responseBody,
                         "Текст ошибки не совпал с ожидаемым. Получен: " + responseBody)
         );
@@ -79,5 +79,30 @@ public class TestPet {
                         "Текст ошибки не совпал с ожидаемым. Получен: " + responseBody)
         );
 
+    }
+
+    @Test
+    @Feature("Pet")
+    @Severity(SeverityLevel.CRITICAL)
+    @Owner("alex_borisenok")
+    public void testTryToGetNotExistedPet() {
+        Response response = step("Попытка получить информацию о несуществующем питомце (GET /pet/{petId})", () ->
+                given()
+                        .contentType(ContentType.JSON)
+                        .header("Accept", "application/json")
+                        .when()
+                        .get(BASE_URL + "/pet/9999"));
+
+        String responseBody = response.getBody().asString();
+
+        step("Проверить, что статус-код ответа == 404", () ->
+                assertEquals(404, response.getStatusCode(),
+                        "Код ответа не совпал с ожидаемым. Ответ " + responseBody)
+        );
+
+        step("Проверить, что текст ответа 'Pet not found'", () ->
+                assertEquals("Pet not found", responseBody,
+                        "Текст ошибки не совпал с ожидаемым. Получен: " + responseBody)
+        );
     }
 }
